@@ -1,11 +1,12 @@
 import socket
 import sys
+import restFinder
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
-server_address = ('172.30.136.211', 10000)
+server_address = ('172.30.136.61', 10000)
 print('starting up on {} port {}'.format(*server_address))
 sock.bind(server_address)
 
@@ -22,10 +23,14 @@ while True:
         # Receive the data in small chunks and retransmit it
         while True:
             data = connection.recv(16)
+            # data = '40.7243,-74.0018'
             print('received {!r}'.format(data))
             if data:
+
+                response = restFinder.getinfo(data)
                 print('sending data back to the client')
-                connection.sendall(data)
+                connection.sendall(response)
+                # print(response)
             else:
                 print('no data from', client_address)
                 break
