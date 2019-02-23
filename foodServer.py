@@ -1,34 +1,35 @@
 import socket
-import threading
-# from saucy import rest_finder
+import sys
 
-class ThreadedServer(object):
-    def __init__(self, host, port):
-        self.host = host
-        self.port = port
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((self.host, self.port))
-    
-    def listen(self):
-        self.sock.listen(5)
+# Create a TCP/IP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Bind the socket to the port
+server_address = ('172.30.136.211', 10000)
+print('starting up on {} port {}'.format(*server_address))
+sock.bind(server_address)
+
+# Listen for incoming connections
+sock.listen(1)
+
+while True:
+    # Wait for a connection
+    print('waiting for a connection')
+    connection, client_address = sock.accept()
+    try:
+        print('connection from', client_address)
+
+        # Receive the data in small chunks and retransmit it
         while True:
-            client, address = self.sock.accept()
-            client.settimeout(60)
-            threading.Thread(target = self.listenToClient,args = (client,address)).start()
+            data = connection.recv(16)
+            print('received {!r}'.format(data))
+            if data:
+                print('sending data back to the client')
+                connection.sendall(data)
+            else:
+                print('no data from', client_address)
+                break
 
-    def listenToClient(self, client, address):
-        size = 1024
-        while True:
-            try:
-                data = client.recv(size)
-                if data:
-                   # response = rest_finder(data)
-                   response = "success"
-                   client.send(response)
-                else:
-                    raise error('Client disconnected')
-            except:
-                client.close()
-                return False
-
+    finally:
+        # Clean up the connection
+        connection.close()
