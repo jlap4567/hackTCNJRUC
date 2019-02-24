@@ -1,30 +1,50 @@
 import socket
 import sys
+import json
+import geocoder
 
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def getInfoFromServer(latlang):
+    # Create a TCP/IP socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Connect the socket to the port where the server is listening
-server_address = ('172.30.136.211', 10000)
-#print('connecting to {} port {}'.format(*server_address))
-sock.connect(server_address)
+    # Connect the socket to the port where the server is listening
+    server_address = ('172.30.136.211', 10000)
 
-try:
+    sock.connect(server_address)
 
-    # Send data
-    message = b'This is the message.  It will be repeated.'
-    print('sending {!r}'.format(message))
-    sock.sendall(message)
+    try:
 
-    # Look for the response
-    amount_received = 0
-    amount_expected = len(message)
+        # Send data
+        message = latlang.encode('UTF-8')
+        print('sending {!r}'.format(message))
+        sock.sendall(message)
 
-    while amount_received < amount_expected:
-        data = sock.recv(16)
-        amount_received += len(data)
-        print('received {!r}'.format(data))
+        # Look for the response
+        amount_received = 0
+        amount_expected = len(message)
 
-finally:
-    print('closing socket')
-    sock.close()
+        #Gets info from server
+        data_json = sock.recv(4000)
+
+        #turns bytes in json
+        data = data_json.decode()
+
+
+    finally:
+        print('closing socket')
+        sock.close()
+        return(data)
+
+def getLatLang():
+    """
+    Dynamically gets location and returns it in a usuable format
+    """
+    g = geocoder.ip('me')
+    out = ''
+    out = out + str(g.latlng[0]) + ',' + str(g.latlng[1])
+    return out
+
+def makeUseable(json_ob):
+    return(json_ob)
+
+print(makeUseable(getInfoFromServer(getLatLang())))
