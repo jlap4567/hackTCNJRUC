@@ -1,0 +1,18 @@
+
+TO DO
+	Sign Up/Login
+	Mange Profile
+	Swipe to Like/Dislike
+	Real Time Chat Features When Users Match
+	Push Notifications
+	Geopositioning/Geotagging
+	Voice Chat
+	Match Making Algorithm: 
+		Defines the Who, What, Where, When and Why
+		of matching participants
+	Social Shares: Could act like a points system for
+		users who share through their social media
+		outlets (e.g. getting access to coupons)
+	Registration through social media platforms and social network integration, creating matches to users who have similar food profiles. Implies another set of matching problems to address (e.g. matching a user to a restaurant, as well as matching among users).
+
+
